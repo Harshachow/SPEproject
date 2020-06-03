@@ -27,6 +27,7 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `Bidders`
 --
+use IPL;
 
 CREATE TABLE `Bidders` (
   `team_id` tinyint(3) UNSIGNED NOT NULL,
