@@ -1,19 +1,12 @@
 {
-  "name": "acl",
+  "name": "IPL",
   "version": "1.0.0",
-  "description": "An auction software made for the bidding of players in an annual cricketing tournament called Ace Cricket League.",
+  "description": "An auction software made for the bidding of players in an IIIT primier league.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "auction",
-    "software",
-    "ACL",
-    "cricket"
-  ],
-  "author": "Sabarinath S., Saif Lakhani, Deepti Tanpure, Vishva Iyer",
-  "license": "ISC",
+    "author": "Harsha Vardhan ,Bhanu",
   "dependencies": {
     "body-parser": "^1.18.2",
     "connect-flash": "^0.1.1",
@@ -23,6 +16,7 @@
     "express": "^4.16.2",
     "mysql": "^2.15.0",
     "path": "^0.12.7",
+    "protractor": "^5.4.2",
     "redis": "^2.8.0",
     "socket.io": "^2.0.4"
   }
