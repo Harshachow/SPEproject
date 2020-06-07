@@ -8,7 +8,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
 // PORT number
-const port = 3001;
+const port = 3000;
 
 // Check connection with MySQL database
 const connection = require('./config/database');
@@ -50,12 +50,12 @@ app.post('/gamemaster/control', function(req, res) {
 
 		var out = Math.floor(results[0].no_of_rounds/6)
 		var round = (out)+1;
-		console.log(round);
+		// console.log(round);
 		redisClient.set('currentRound', round);
 
 		connection.query(sql_group_data, [round], function(err1, results1) {
 			if(err1) throw err1;
-			console.log(results);
+			// console.log(results);
 			var grp_name = results1[0].group_name;
 			var grp_desc = results1[0].group_desc;
 			var base_bid = results1[0].base_bid;
@@ -67,7 +67,7 @@ app.post('/gamemaster/control', function(req, res) {
 			connection.query(sql_player_data, [round], function(err2, results2) {
 				if(err2) throw err2;
 				var plyr_obj = results2;
-				console.log(results2);
+				// console.log(results2);
 				connection.query(sql_net_expense,function(err3,reply3){
 					if(err3) throw err3;
 					var net_expense = reply3[0].net_bid;
@@ -75,7 +75,7 @@ app.post('/gamemaster/control', function(req, res) {
 						if(err4) throw err4;
 						var premium_spent = (150000*6)-reply4[0].net_prem;
 
-						redisClient.zrevrange('TeamRanks', 0, 1500000, "withscores", function(err5, reply5) {
+						redisClient.zrevrange('TeamRanks', 0, 5000, "withscores", function(err5, reply5) {
 
 							res.render('master', {
 								curRound: round,
@@ -116,13 +116,13 @@ app.post('/gamemaster/selection', function(req, res) {
 			let sql_group_data = "SELECT group_name, group_desc, base_bid, max_bid FROM Groups WHERE group_id = ?";
 			connection.query(sql_group_data,[groupID],function(err1,res1){
 				if(err1) throw err1;
-				console.log(res1[0]);
+				// console.log(res1[0]);
 				var grp_name = res1[0].group_name;
 				var grp_desc = res1[0].group_desc;
 
 				redisClient.zrevrange('TeamRanks', 0, 1500000, "withscores", function(err3, reply3) {
 					if(err3) throw err3;
-					console.log(reply3);
+					// console.log(reply3);
 					res.render('selection', {
 						curRound: groupID,
 						player_obj:player_object,
@@ -274,11 +274,11 @@ app.post('/gamemaster/assignPlayers', function(req,res){
 				for(var i=0; i<6; i++) {
 					var teamCodeInSortedSet = rankingArray[i];
 					redisClient.zadd('TeamRanks', baseBidForNextRound + i * 1000, teamCodeInSortedSet);
-					redisClient.hset(teamCodeInSortedSet, 'yourBid', baseBidForNextRound + i * 1000);
+					redisClient.hset(teamCodeInSortedSet, 'yourBid', 5000);
 					// console.log(teamCodeInSortedSet + " " + baseBidForNextRound + i * 1000);
 				}
 				// console.log("End 1Sabari");
-				redisClient.set('currentBid', baseBidForNextRound + 5000);
+				redisClient.set('currentBid', 5000);
 			});
 		});
 	});
@@ -429,7 +429,7 @@ app.post('/bidding', function(req, res) {
 	teamObject = 0;
 	redisClient.hgetall("team" + teamID, function(err, object) {
 		teamObject = object;
-
+		// console.log(teamObject);
 		let currRound = 0, currBid = 0, teamRank = 0, yourBid = 0, prem_flag = 0;
 		let grp_obj, team_obj, player_obj;
 		let sql_count = "SELECT count(*) AS no_of_rounds FROM Bidding";
@@ -457,7 +457,7 @@ app.post('/bidding', function(req, res) {
 						// console.log("\nTAG: 100Sabari\nBidFlag = " + teamObject.bidFlag + "\nEnd: 100Sabari");
 						if(teamObject.bidFlag == 1){
 							redisClient.get('currentBid', function(err, reply) {
-								currBid = reply;
+								currBid = 5000;
 								var disableBtn = false;
 
 								redisClient.get('maxBid', function(err1, reply1) {
@@ -470,7 +470,7 @@ app.post('/bidding', function(req, res) {
 
 										redisClient.zrevrange('TeamRanks', 0, 1500000, "withscores", function(err3, reply3) {
 											if(err3) throw err3;
-
+											// console.log(reply3)
 											if(currBid >= grp_obj[0].max_bid){
 												prem_flag = 1;
 												res.render('bidding.ejs', {
@@ -480,7 +480,7 @@ app.post('/bidding', function(req, res) {
 													player_object: player_obj,
 													current_bid: currBid,
 													rank: teamRank,
-													your_bid: yourBid,
+													your_bid: 5000,
 													teamRankings: reply3,
 													premiumFlag: prem_flag,
 													bidFlag: teamObject.bidFlag,
@@ -495,7 +495,7 @@ app.post('/bidding', function(req, res) {
 													player_object: player_obj,
 													current_bid: currBid,
 													rank: teamRank,
-													your_bid: yourBid,
+													your_bid: 5000,
 													teamRankings: reply3,
 													premiumFlag: prem_flag,
 													bidFlag: teamObject.bidFlag,
@@ -510,6 +510,7 @@ app.post('/bidding', function(req, res) {
 						else {
 							var disableBtn = true;
 							redisClient.zrevrange('TeamRanks', 0, 15000000, "withscores", function(err4, reply4) {
+								// console.log(reply4)
 								res.render('bidding.ejs', {
 									currentRound: currRound,
 									group_object: grp_obj,
@@ -517,7 +518,7 @@ app.post('/bidding', function(req, res) {
 									player_object: player_obj,
 									current_bid: 0,
 									rank: 0,
-									your_bid: 0,
+									your_bid: 5000,
 									teamRankings: reply4,
 									premiumFlag: prem_flag,
 									bidFlag: teamObject.bidFlag,
@@ -630,11 +631,12 @@ io.on('connection', function(client) {
 	// Gamemaster event to register initial bids
 	client.on('login', function(data) {
 		let teamID = data.team_id;
-		let firstBid = data.initial_amount;
-
+		let firstBid = 5000;
+		console.log("initial amount" + data.initial_amount)
 		// console.log('TAG:VISHVA after login socket' + firstBid);
 
 		redisClient.get('currentBid', function(err, reply) {
+			// console.log(reply)
 			if(parseInt(firstBid) > parseInt(reply)){
 				redisClient.set('currentBid', firstBid);
 			}
