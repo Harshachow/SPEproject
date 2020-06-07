@@ -45,10 +45,11 @@ pipeline {
         }
       }
     }
-    // stage('Test') {
-    //   steps {
-    //       sh 'selenium-side-runner --output-directory=./testing/results -c "browserName=chrome goog:chromeOptions.args=[headless]" --output-format=junit ./testing/IIITB-Event-Calendar.side'
-    //   }
-    // }
+     stage('Test') {
+       steps {
+           //sh 'selenium-side-runner --output-directory=./testing/results -c "browserName=chrome goog:chromeOptions.args=[headless]" --output-format=junit ./testing/IIITB-Event-Calendar.side'
+           sh 'selenium-side-runner --output-directory=./testing/results -c "browserName=chrome goog:chromeOptions.args=[headless]" --output-format=junit ./devops.side'
+      }
+     }
   }
 }

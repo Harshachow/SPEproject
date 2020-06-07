@@ -1,9 +1,7 @@
 const redis = require('redis');
 
 // Create connection with Redis database
-const redisClient = redis.createClient(
-{host: 'redis',
-port: 6379});
+const redisClient = redis.createClient();
 
 // Check connection with Redis
 redisClient.on('connect', function() {
@@ -23,7 +21,7 @@ redisClient.on('connect', function() {
 		    'premLeft': 150000,
 		    'yourBid': 0
 		});
-		redisClient.zadd('aclTeamRanks', 0, key);
+		redisClient.zadd('TeamRanks', 0, key);
 	} 
 });
 redisClient.on('error', function(){
